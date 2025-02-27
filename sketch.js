@@ -64,25 +64,13 @@ function draw() {
 			const nextAngle = getTouchAngle(currentPoint, nextPoint, radius, clockWise);
 			const prevAngle = getTouchAngle(currentPoint, prevPoint, radius, clockWise);
 
-			// Adjust the angles based on direction and whether there's a direction change
-			let adjustedPrevAngle = prevAngle + HALF_PI * (clockWise ? -1 : 1);
-			let adjustedNextAngle;
-
-			if (directionChange) {
-				// If direction changes, we need to use the opposite adjustment for the next angle
-				adjustedNextAngle = nextAngle + HALF_PI * (clockWise ? -1 : 1);
-			} else {
-				// Normal case - consistent direction
-				adjustedNextAngle = nextAngle + HALF_PI * (clockWise ? 1 : -1);
-			}
-
-			// Use the adjusted angles for the bezier arc
+			// Use the proper offset for the bezier arc
 			bezierArc(
 				currentPoint.x,
 				currentPoint.y,
 				radius,
-				adjustedPrevAngle,
-				adjustedNextAngle,
+				prevAngle + HALF_PI * (clockWise ? -1 : 1),
+				nextAngle + HALF_PI * (clockWise ? 1 : -1),
 				clockWise
 			);
 		}
