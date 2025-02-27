@@ -76,7 +76,29 @@ function draw() {
 		}
 	}
 	endShape();
+	
+	// Add point labels after drawing the curves
+	for (let i = 0; i < points.length; i++) {
+		drawPointLabel(points[i], i);
+	}
+	
 	if (addMode) points.pop();
+}
+
+// Function to draw a number at each point
+function drawPointLabel(point, index) {
+	push();
+	fill(0);
+	noStroke();
+	textSize(14);
+	textAlign(CENTER, CENTER);
+	text(index, point.x, point.y - 15);
+	
+	// Also draw a small circle at the point for clarity
+	stroke(255, 0, 0);
+	fill(255, 0, 0);
+	ellipse(point.x, point.y, 3, 3);
+	pop();
 }
 
 function getTouchAngle(c1, c2, radius, clockWise) {
