@@ -78,22 +78,7 @@ function draw() {
 	}
 	endShape();
 	
-	// Mark the start and end points of the curve
-	if (points.length > 0) {
-		// Start point (blue)
-		push();
-		fill(0, 0, 255);
-		noStroke();
-		ellipse(points[0].x, points[0].y, 6, 6);
-		pop();
-		
-		// End point (yellow)
-		push();
-		fill(255, 255, 0);
-		noStroke();
-		ellipse(points[points.length-1].x, points[points.length-1].y, 6, 6);
-		pop();
-	}
+	// We'll mark the start and end points of the bezier arcs in the bezierArc function
 	
 	// Add point labels after drawing the curves
 	for (let i = 0; i < points.length; i++) {
@@ -145,6 +130,30 @@ function bezierArc(cx, cy, radius, startAngle, endAngle, clockwise) {
 	
 	let totalSegments = ceil(abs(totalAngle) / maxAngle);
 	let angleIncrement = totalAngle / totalSegments;
+	
+	// Calculate start and end points of the entire arc
+	let arcStartX = cx + radius * cos(startAngle);
+	let arcStartY = cy + radius * sin(startAngle);
+	let arcEndX = cx + radius * cos(endAngle);
+	let arcEndY = cy + radius * sin(endAngle);
+	
+	// Mark the start point with a blue dot (only for the first round)
+	if (rounds === 6) { // Assuming we're in the first round when radius is largest
+		push();
+		fill(0, 0, 255);
+		noStroke();
+		ellipse(arcStartX, arcStartY, 6, 6);
+		pop();
+	}
+	
+	// Mark the end point with a yellow dot (only for the first round)
+	if (rounds === 6) { // Assuming we're in the first round when radius is largest
+		push();
+		fill(255, 255, 0);
+		noStroke();
+		ellipse(arcEndX, arcEndY, 6, 6);
+		pop();
+	}
 	
 	// Draw the segments
 	for (let i = 0; i < totalSegments; i++) {
