@@ -36,6 +36,7 @@ function draw() {
 	background(220);
 	if (addMode) points.push(createVector(mouseX, mouseY));
 
+	// Draw the curve
 	beginShape();
 	for (let round = 1; round <= rounds; round++) {
 		for (let i = 0; i < points.length; i++) {
@@ -76,6 +77,23 @@ function draw() {
 		}
 	}
 	endShape();
+	
+	// Mark the start and end points of the curve
+	if (points.length > 0) {
+		// Start point (blue)
+		push();
+		fill(0, 0, 255);
+		noStroke();
+		ellipse(points[0].x, points[0].y, 6, 6);
+		pop();
+		
+		// End point (yellow)
+		push();
+		fill(255, 255, 0);
+		noStroke();
+		ellipse(points[points.length-1].x, points[points.length-1].y, 6, 6);
+		pop();
+	}
 	
 	// Add point labels after drawing the curves
 	for (let i = 0; i < points.length; i++) {
