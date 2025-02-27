@@ -65,13 +65,23 @@ function draw() {
 			const nextAngle = getTouchAngle(currentPoint, nextPoint, radius, clockWise);
 			const prevAngle = getTouchAngle(currentPoint, prevPoint, radius, clockWise);
 
+			// Check if the next segment has a direction change
+			const nextClockWiseForAngle = i < points.length - 1 ? nextClockWise : clockWise;
+			
+			// Adjust the next angle if there's a direction change
+			let adjustedNextAngle = nextAngle;
+			if (clockWise !== nextClockWiseForAngle) {
+				// If direction changes, we need to adjust the angle to ensure smooth transition
+				adjustedNextAngle = nextAngle + (clockWise ? -PI : PI);
+			}
+
 			// Use the proper offset for the bezier arc
 			bezierArc(
 				currentPoint.x,
 				currentPoint.y,
 				radius,
 				prevAngle + HALF_PI * (clockWise ? -1 : 1),
-				nextAngle + HALF_PI * (clockWise ? 1 : -1),
+				adjustedNextAngle + HALF_PI * (clockWise ? 1 : -1),
 				clockWise
 			);
 		}
@@ -108,9 +118,19 @@ function getTouchAngle(c1, c2, radius, clockWise) {
 	// Calculate the basic angle between points
 	const centerAngle = atan2(c2.y - c1.y, c2.x - c1.x);
 	
-	// We don't need to adjust with asin(radius/d) as that's causing issues
-	// Just return the basic angle between the points
-	return centerAngle;
+	// Calculate the distance between points
+	const d = dist(c1.x, c1.y, c2.x, c2.y);
+	
+	// If the distance is very small, just return the center angle
+	if (d < radius * 2) {
+		return centerAngle;
+	}
+	
+	// Calculate the angle adjustment based on the radius and distance
+	const angleAdjust = asin(constrain(radius / d, 0, 1));
+	
+	// Return the adjusted angle based on direction
+	return clockWise ? centerAngle - angleAdjust : centerAngle + angleAdjust;
 }
 
 function bezierArc(cx, cy, radius, startAngle, endAngle, clockwise) {
@@ -138,7 +158,7 @@ function bezierArc(cx, cy, radius, startAngle, endAngle, clockwise) {
 	let arcEndY = cy + radius * sin(endAngle);
 	
 	// Mark the start point with a blue dot (only for the first round)
-	if (rounds === 6) { // Assuming we're in the first round when radius is largest
+	if (round === 1) {
 		push();
 		fill(0, 0, 255);
 		noStroke();
@@ -147,7 +167,7 @@ function bezierArc(cx, cy, radius, startAngle, endAngle, clockwise) {
 	}
 	
 	// Mark the end point with a yellow dot (only for the first round)
-	if (rounds === 6) { // Assuming we're in the first round when radius is largest
+	if (round === 1) {
 		push();
 		fill(255, 255, 0);
 		noStroke();
