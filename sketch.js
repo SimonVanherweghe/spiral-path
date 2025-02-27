@@ -57,32 +57,15 @@ function draw() {
 			const roundFactor = clockWise ? rounds - round + 1 : round;
 			const radius = spacerStep * i + roundFactor * spacer;
 
-			const nextAngle =
-				getTouchAngle(
-					currentPoint,
-					nextPoint,
-					rounds * spacer,
-					clockWise,
-					nextClockWise
-				) +
-				HALF_PI * (clockWise ? 1 : -1);
-
-			const prevAngle =
-				getTouchAngle(
-					currentPoint,
-					prevPoint,
-					rounds * spacer,
-					clockWise,
-					nextClockWise
-				) +
-				HALF_PI * (clockWise ? -1 : 1);
+			const nextAngle = getTouchAngle(currentPoint, nextPoint, radius, clockWise);
+			const prevAngle = getTouchAngle(currentPoint, prevPoint, radius, clockWise);
 
 			bezierArc(
 				currentPoint.x,
 				currentPoint.y,
 				radius,
-				prevAngle,
-				nextAngle,
+				prevAngle + HALF_PI * (clockWise ? -1 : 1),
+				nextAngle + HALF_PI * (clockWise ? 1 : -1),
 				clockWise
 			);
 		}
@@ -91,39 +74,44 @@ function draw() {
 	if (addMode) points.pop();
 }
 
-function getTouchAngle(c1, c2, r1, r2, clockWise, nextClockWise) {
-	const d = c1.dist(c2);
-
+function getTouchAngle(c1, c2, radius, clockWise) {
+	// Calculate the basic angle between points
 	const centerAngle = atan2(c2.y - c1.y, c2.x - c1.x);
-	let radiAngle = asin(r1 / d);
-
-	const angle = centerAngle + radiAngle;
-	return angle;
+	
+	// We don't need to adjust with asin(radius/d) as that's causing issues
+	// Just return the basic angle between the points
+	return centerAngle;
 }
 
 function bezierArc(cx, cy, radius, startAngle, endAngle, clockwise) {
-	let maxAngle = PI / 18;
-
+	let maxAngle = PI / 18; // Keep small segments for smooth curves
+	
+	// Calculate the total angle difference, considering direction
 	let totalAngle = endAngle - startAngle;
+	
+	// Normalize the angle based on direction
 	if (clockwise) {
-		totalAngle = (totalAngle - TWO_PI) % TWO_PI; // Adjust to counterclockwise
+		// Make sure we go clockwise
+		if (totalAngle > 0) totalAngle = totalAngle - TWO_PI;
 	} else {
-		totalAngle = (totalAngle + TWO_PI) % TWO_PI; // Adjust to clockwise
+		// Make sure we go counterclockwise
+		if (totalAngle < 0) totalAngle = totalAngle + TWO_PI;
 	}
-
+	
 	let totalSegments = ceil(abs(totalAngle) / maxAngle);
 	let angleIncrement = totalAngle / totalSegments;
-
+	
+	// Draw the segments
 	for (let i = 0; i < totalSegments; i++) {
 		let segmentStart = startAngle + i * angleIncrement;
 		let segmentEnd = segmentStart + angleIncrement;
-
+		
 		if (i == 0) {
 			let startX = cx + radius * cos(segmentStart);
 			let startY = cy + radius * sin(segmentStart);
 			vertex(startX, startY);
 		}
-
+		
 		bezierArcSegment(cx, cy, radius, segmentStart, segmentEnd);
 	}
 }
