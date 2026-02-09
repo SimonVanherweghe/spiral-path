@@ -1,0 +1,30 @@
+{
+  "name": "spiral-path",
+  "version": "1.0.0",
+  "description": "",
+  "main": "p5.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SimonVanherweghe/spiral-path.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SimonVanherweghe/spiral-path/issues"
+  },
+  "homepage": "https://github.com/SimonVanherweghe/spiral-path#readme",
+  "devDependencies": {
+    "vite": "^7.3.1"
+  },
+  "dependencies": {
+    "p5": "^1.11.0",
+    "p5.js-svg": "^1.6.0"
+  }
+}
