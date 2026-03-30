@@ -9,10 +9,11 @@ let spacer = 5;
 let rounds = 6;
 let addMode = true;
 let debugMode = false;
+let dragIndex = -1;
 
 const sketch = (p) => {
   p.setup = () => {
-    p.createCanvas(297, 420, p.SVG);
+    p.createCanvas(420, 420, p.SVG);
     p.ellipseMode(p.RADIUS);
 
     p.noFill();
@@ -161,9 +162,25 @@ const sketch = (p) => {
   };
 
   p.mousePressed = () => {
+    if (debugMode && !addMode) {
+      dragIndex = points.findIndex(
+        (pt) => p.dist(p.mouseX, p.mouseY, pt.x, pt.y) < 10,
+      );
+      return;
+    }
     if (addMode) {
       points.push(p.createVector(p.mouseX, p.mouseY));
     }
+  };
+
+  p.mouseDragged = () => {
+    if (debugMode && dragIndex !== -1) {
+      points[dragIndex].set(p.mouseX, p.mouseY);
+    }
+  };
+
+  p.mouseReleased = () => {
+    dragIndex = -1;
   };
 
   const drawPointLabel = (point, index) => {
@@ -176,9 +193,11 @@ const sketch = (p) => {
     p.text(index, point.x, point.y - 15);
 
     // Also draw a small circle at the point for clarity
+    const hovered =
+      !addMode && p.dist(p.mouseX, p.mouseY, point.x, point.y) < 10;
     p.stroke(255, 0, 0);
     p.fill(255, 0, 0);
-    p.ellipse(point.x, point.y, 3, 3);
+    p.ellipse(point.x, point.y, hovered ? 7 : 3, hovered ? 7 : 3);
     p.pop();
   };
 
