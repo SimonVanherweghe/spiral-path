@@ -35,6 +35,19 @@ const SNAP_THRESHOLD = 10;
 let snappedX = 0;
 let snappedY = 0;
 
+const updatePhysicalSpacerDisplay = () => {
+  const input = document.getElementById("physical-size");
+  const unitSel = document.getElementById("physical-unit");
+  const display = document.getElementById("physical-spacer");
+  const physicalSize = parseFloat(input.value);
+  const unit = unitSel.value;
+  if (!physicalSize || isNaN(physicalSize)) { display.textContent = "—"; return; }
+  const { w, h } = getCanvasDimensions();
+  const unitsPerPx = physicalSize / Math.max(w, h);
+  const physicalSpacer = spacer * unitsPerPx;
+  display.textContent = `${physicalSpacer.toFixed(2)} ${unit}`;
+};
+
 const sketch = (p) => {
   p.setup = () => {
     const sel = document.getElementById("aspect-ratio");
@@ -46,12 +59,18 @@ const sketch = (p) => {
     sel.addEventListener("change", () => {
       const { w, h } = getCanvasDimensions();
       p.resizeCanvas(w, h);
+      updatePhysicalSpacerDisplay();
     });
+
+    document.getElementById("physical-size").addEventListener("input", updatePhysicalSpacerDisplay);
+    document.getElementById("physical-unit").addEventListener("change", updatePhysicalSpacerDisplay);
+    updatePhysicalSpacerDisplay();
   };
 
   p.windowResized = () => {
     const { w, h } = getCanvasDimensions();
     p.resizeCanvas(w, h);
+    updatePhysicalSpacerDisplay();
   };
 
   const computeSnap = (mx, my, skipIndex = -1) => {
@@ -214,9 +233,11 @@ const sketch = (p) => {
     }
     if (p.keyCode === p.RIGHT_ARROW) {
       spacer++;
+      updatePhysicalSpacerDisplay();
     }
     if (p.keyCode === p.LEFT_ARROW) {
       spacer = p.max(1, spacer - 1);
+      updatePhysicalSpacerDisplay();
     }
     if (p.key === "d" || p.key === "D") {
       debugMode = !debugMode;

@@ -99,6 +99,15 @@
 			<option value="A4P">A4 Portrait</option>
 			<option value="A4L">A4 Landscape</option>
 		</select>
+		<label for="physical-size" style="font-size:0.875rem;color:#444;display:block;margin-bottom:0.4rem;">Physical size (largest side)</label>
+		<div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
+			<input type="number" id="physical-size" value="210" min="1" step="1" style="width:5rem;">
+			<select id="physical-unit">
+				<option value="mm" selected>mm</option>
+				<option value="cm">cm</option>
+			</select>
+		</div>
+		<p style="font-size:0.875rem;color:#444;margin-bottom:1.5rem;">Spacing: <strong><span id="physical-spacer">—</span></strong></p>
 		<h2>Controls</h2>
 		<dl>
 			<div class="entry"><dt>Click</dt><dd>Add bend</dd></div>
