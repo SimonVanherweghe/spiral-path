@@ -73,11 +73,32 @@
 			font-size: 0.875rem;
 			color: #444;
 		}
+
+		select {
+			font-size: 0.875rem;
+			padding: 0.25rem 0.4rem;
+			border: 1px solid #ddd;
+			border-radius: 3px;
+			background: #fff;
+			color: #444;
+			cursor: pointer;
+			width: 100%;
+		}
 	</style>
 </head>
 
 <body>
 	<aside>
+		<h2>Canvas</h2>
+		<label for="aspect-ratio" style="font-size:0.875rem;color:#444;display:block;margin-bottom:0.4rem;">Aspect ratio</label>
+		<select id="aspect-ratio" style="margin-bottom:1.5rem;">
+			<option value="1:1" selected>1:1</option>
+			<option value="4:3">4:3</option>
+			<option value="3:2">3:2</option>
+			<option value="16:9">16:9</option>
+			<option value="A4P">A4 Portrait</option>
+			<option value="A4L">A4 Landscape</option>
+		</select>
 		<h2>Controls</h2>
 		<dl>
 			<div class="entry"><dt>Click</dt><dd>Add bend</dd></div>

@@ -3,6 +3,27 @@ import init, { p5SVG } from "p5.js-svg";
 
 init(p5);
 
+const ASPECT_RATIOS = {
+  "1:1":  1,
+  "4:3":  4 / 3,
+  "3:2":  3 / 2,
+  "16:9": 16 / 9,
+  "A4P":  1 / Math.SQRT2,
+  "A4L":  Math.SQRT2,
+};
+
+const getCanvasDimensions = () => {
+  const container = document.getElementById("canvas-container");
+  const sel = document.getElementById("aspect-ratio");
+  const ratio = ASPECT_RATIOS[sel.value] ?? 1;
+  const margin = 32;
+  const availW = container.clientWidth - margin;
+  const availH = container.clientHeight - margin;
+  const h = Math.min(availH, Math.floor(availW / ratio));
+  const w = Math.round(h * ratio);
+  return { w, h };
+};
+
 const points = [];
 let spacer = 5;
 let rounds = 6;
@@ -16,10 +37,21 @@ let snappedY = 0;
 
 const sketch = (p) => {
   p.setup = () => {
-    p.createCanvas(420, 420, p.SVG);
+    const sel = document.getElementById("aspect-ratio");
+    const { w, h } = getCanvasDimensions();
+    p.createCanvas(w, h, p.SVG);
     p.ellipseMode(p.RADIUS);
-
     p.noFill();
+
+    sel.addEventListener("change", () => {
+      const { w, h } = getCanvasDimensions();
+      p.resizeCanvas(w, h);
+    });
+  };
+
+  p.windowResized = () => {
+    const { w, h } = getCanvasDimensions();
+    p.resizeCanvas(w, h);
   };
 
   const computeSnap = (mx, my, skipIndex = -1) => {
@@ -61,7 +93,8 @@ const sketch = (p) => {
       snappedY = p.mouseY;
     }
 
-    if (addMode) points.push(p.createVector(snappedX, snappedY));
+    const mouseInCanvas = p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height;
+    if (addMode && mouseInCanvas) points.push(p.createVector(snappedX, snappedY));
 
     // Precompute turn directions at each point (independent of round)
     const clockWiseArr = [];
@@ -166,7 +199,7 @@ const sketch = (p) => {
       drawPointLabel(points[i], i);
     }
 
-    if (addMode) points.pop();
+    if (addMode && mouseInCanvas) points.pop();
   };
 
   p.keyPressed = () => {
@@ -209,7 +242,7 @@ const sketch = (p) => {
       );
       return;
     }
-    if (addMode) {
+    if (addMode && p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height) {
       points.push(p.createVector(snappedX, snappedY));
     }
   };
