@@ -9,7 +9,11 @@ let spacer = 5;
 let rounds = 6;
 let addMode = true;
 let debugMode = false;
+let snapMode = false;
 let dragIndex = -1;
+const SNAP_THRESHOLD = 10;
+let snappedX = 0;
+let snappedY = 0;
 
 const sketch = (p) => {
   p.setup = () => {
@@ -19,11 +23,46 @@ const sketch = (p) => {
     p.noFill();
   };
 
+  const computeSnap = (mx, my, skipIndex = -1) => {
+    let sx = mx, sy = my;
+    let bestXDist = SNAP_THRESHOLD, bestYDist = SNAP_THRESHOLD;
+    let snapXSource = null, snapYSource = null;
+    for (let i = 0; i < points.length; i++) {
+      if (i === skipIndex) continue;
+      const pt = points[i];
+      const dx = Math.abs(mx - pt.x);
+      const dy = Math.abs(my - pt.y);
+      if (dx < bestXDist) { bestXDist = dx; sx = pt.x; snapXSource = pt; }
+      if (dy < bestYDist) { bestYDist = dy; sy = pt.y; snapYSource = pt; }
+    }
+    return { x: sx, y: sy, snapXSource, snapYSource };
+  };
+
   p.draw = () => {
     p.clear();
     p.background(255);
 
-    if (addMode) points.push(p.createVector(p.mouseX, p.mouseY));
+    // Compute snapped cursor position from existing points
+    if (snapMode) {
+      const snap = computeSnap(p.mouseX, p.mouseY);
+      snappedX = snap.x;
+      snappedY = snap.y;
+
+      // Draw guidelines behind everything
+      if (snap.snapXSource || snap.snapYSource) {
+        p.push();
+        p.stroke(0, 120, 255, 120);
+        p.strokeWeight(1);
+        if (snap.snapXSource) p.line(snappedX, 0, snappedX, p.height);
+        if (snap.snapYSource) p.line(0, snappedY, p.width, snappedY);
+        p.pop();
+      }
+    } else {
+      snappedX = p.mouseX;
+      snappedY = p.mouseY;
+    }
+
+    if (addMode) points.push(p.createVector(snappedX, snappedY));
 
     // Precompute turn directions at each point (independent of round)
     const clockWiseArr = [];
@@ -150,6 +189,9 @@ const sketch = (p) => {
     if (p.key === "d" || p.key === "D") {
       debugMode = !debugMode;
     }
+    if (p.key === "g" || p.key === "G") {
+      snapMode = !snapMode;
+    }
     if (p.key === "c" || p.key === "C") {
       points.length = 0;
     }
@@ -169,13 +211,18 @@ const sketch = (p) => {
       return;
     }
     if (addMode) {
-      points.push(p.createVector(p.mouseX, p.mouseY));
+      points.push(p.createVector(snappedX, snappedY));
     }
   };
 
   p.mouseDragged = () => {
     if (debugMode && dragIndex !== -1) {
-      points[dragIndex].set(p.mouseX, p.mouseY);
+      if (snapMode) {
+        const snap = computeSnap(p.mouseX, p.mouseY, dragIndex);
+        points[dragIndex].set(snap.x, snap.y);
+      } else {
+        points[dragIndex].set(p.mouseX, p.mouseY);
+      }
     }
   };
 
