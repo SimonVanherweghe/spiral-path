@@ -4,31 +4,94 @@
 <head>
 	<meta charset="utf-8" />
 	<title>Spiral Path</title>
+	<style>
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		html, body {
+			height: 100%;
+		}
+
+		body {
+			display: flex;
+			font-family: sans-serif;
+			background: #f5f5f5;
+		}
+
+		aside {
+			width: max-content;
+			flex-shrink: 0;
+			padding: 2rem;
+			overflow-y: auto;
+			border-right: 1px solid #ddd;
+			background: #fafafa;
+		}
+
+		#canvas-container {
+			flex: 1;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+		}
+
+		aside h2 {
+			font-size: 1rem;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			color: #666;
+			margin-bottom: 1rem;
+		}
+
+		dl {
+			display: flex;
+			flex-direction: column;
+			gap: 0.75rem;
+		}
+
+		div.entry {
+			display: flex;
+			flex-direction: column;
+			gap: 0.2rem;
+		}
+
+		dt {
+			font-family: monospace;
+			font-size: 0.8rem;
+			background: #e8e8e8;
+			padding: 0.15rem 0.4rem;
+			border-radius: 3px;
+			white-space: nowrap;
+			width: max-content;
+		}
+
+		dd {
+			font-size: 0.875rem;
+			color: #444;
+		}
+	</style>
 </head>
 
 <body>
-	<main>
+	<aside>
+		<h2>Controls</h2>
 		<dl>
-			<dt>Click</dt>
-			<dd>Add bend</dd>
-			<dt>ESC</dt>
-			<dd>Toggle add mode</dd>
-			<dt>UP/DOWN ARROW</dt>
-			<dd>Amount of rounds</dd>
-			<dt>LEFT/RIGHT ARROW</dt>
-			<dd>Adjust spacer</dd>
-			<dt>D</dt>
-			<dd>Toggle debug mode</dd>
-			<dt>G</dt>
-			<dd>Toggle snap guidelines</dd>
-			<dt>C</dt>
-			<dd>Clear all points</dd>
-			<dt>R</dt>
-			<dd>Remove last point</dd>
-			<dt>S</dt>
-			<dd>Save as SVG</dd>
+			<div class="entry"><dt>Click</dt><dd>Add bend</dd></div>
+			<div class="entry"><dt>ESC</dt><dd>Toggle add mode</dd></div>
+			<div class="entry"><dt>UP/DOWN ARROW</dt><dd>Amount of rounds</dd></div>
+			<div class="entry"><dt>LEFT/RIGHT ARROW</dt><dd>Adjust spacer</dd></div>
+			<div class="entry"><dt>D</dt><dd>Toggle debug mode</dd></div>
+			<div class="entry"><dt>G</dt><dd>Toggle snap guidelines</dd></div>
+			<div class="entry"><dt>C</dt><dd>Clear all points</dd></div>
+			<div class="entry"><dt>R</dt><dd>Remove last point</dd></div>
+			<div class="entry"><dt>S</dt><dd>Save as SVG</dd></div>
 		</dl>
-	</main>
+	</aside>
+	<div id="canvas-container"></div>
 	<script type="module" src="src/sketch.js"></script>
 </body>
 

@@ -1,4 +1,3 @@
-import "./style.css";
 import p5 from "p5";
 import init, { p5SVG } from "p5.js-svg";
 
@@ -326,4 +325,4 @@ const sketch = (p) => {
   };
 };
 
-new p5(sketch, document.querySelector("main"));
+new p5(sketch, document.querySelector("#canvas-container"));
